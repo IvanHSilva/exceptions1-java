@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import model.exceptions.DomainException;
+
 public class Reserva {
 	
 	private Integer quarto;
@@ -16,6 +18,9 @@ public class Reserva {
 	}
 
 	public Reserva(Integer quarto, Date checkIn, Date checkOut) {
+		if (!checkOut.after(checkIn)) {
+			throw new DomainException("Erro na Reserva: a data de chekout deve ser superior a de chekin!");
+		}
 		this.quarto = quarto;
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
@@ -42,19 +47,18 @@ public class Reserva {
 		return TimeUnit.DAYS.convert(dif, TimeUnit.MILLISECONDS);
 	}
 	
-	public String atualizar(Date checkIn, Date checkOut) {
+	public void atualizar(Date checkIn, Date checkOut) {
 		
 		Date agora = new Date();
 		if (checkIn.before(agora) || checkOut.before(agora)) {
-			return "Erro na Reserva: as datas de atualização devem ser maiores que a atual!";
+			throw new DomainException("Erro na Reserva: as datas de atualização devem ser maiores que a atual!");
 		} 
 		if (!checkOut.after(checkIn)) {
-			return "Erro na Reserva: a data de chekout deve ser superior a de chekin!";
+			throw new DomainException("Erro na Reserva: a data de chekout deve ser superior a de chekin!");
 		}
 		
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
-		return null;
 	}
 	
 	@Override
